@@ -1,6 +1,15 @@
-/*body{
-    background-color: pink;
-}*/
+body {
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction:column;
+    min-height: 100vh;
+}
+.container {
+  flex:1; 
+}
+
+
 /* Navbar */
 .navbar {
     height: 5rem;
@@ -8,43 +17,83 @@
 }
 .fa-compass {
     color: #fe424d;
-    font-size:2rem;
+    font-size: 2rem;
 }
-.nav-link{
-   color:#222222; 
-   font-weight:bold;
+.nav-link {
+    color: #222222 !important;
+    font-weight: bold;
 }
-/*Footer*/
+
+/* Footer */
 .f-info-links a {
     text-decoration: none;
-    color:#222222;
+    color: #222222;
 }
 .f-info-links a:hover {
-    text-decoration:underline;
-    color:#222222;
+    text-decoration: underline;
+    color: #222222;
 }
-.f-info-socials , .f-info-links , .f-info-brand  {
-      width:100%;
-      display:flex;
-      align-items: center;
-      justify-content: center;
+.f-info-socials,
+.f-info-links,
+.f-info-brand {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
- 
 .f-info-socials i {
-    
-    font-size:1.2rem;
+    font-size: 1.2rem;
     margin-right: 1rem;
-
 }
-
 .f-info {
     text-align: center;
-    height:8rem;
-    background-color:#ebebeb;
-    display:flex;
+    height: 8rem;
+    background-color: #ebebeb;
+    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: space-evenly;
+}
 
+/* Cards */
+.card {
+    border: none !important;  /* removes card borders */
+    background: transparent;
+    margin-bottom: 2rem;
+}
+
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100%;
+    height: 250px;             /* equal size for all images */
+    object-fit: cover;         /* crop instead of stretch */
+    transition: transform 0.3s ease; /* smooth hover zoom */
+}
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 0.5rem 0 !important;
+    background: white;        
+    border-radius: 0 0 10px 10px;
+}
+
+.card-title a {
+    text-decoration: none;
+    color: #222222;
+    font-weight: bold;
+}
+.card-title a:hover {
+    color: #fe424d;
+}
+
+.card-text {
+    font-weight: 400 !important;
+    color: #717171;
+}
+/*New Page*/
+.add-btn {
+    background-color: #fe424d !important ;
+    border:none !important;
 }
