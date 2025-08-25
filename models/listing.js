@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Review = require("./review.js");
 
 const listingSchema = new Schema(
   {
@@ -14,10 +15,26 @@ const listingSchema = new Schema(
       },
     },
     price: { type: Number, required: true, min: 0 },
-    location: String,
-    country: String,
+    location: { type: String, trim: true },
+    country: { type: String, trim: true },
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Listing", listingSchema);
+// Middleware to delete reviews if a listing is deleted
+listingSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await Review.deleteMany({ _id: { $in: doc.reviews } });
+  }
+});
+
+const Listing = mongoose.model("Listing", listingSchema);
+
+module.exports = Listing;
+

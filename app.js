@@ -9,11 +9,15 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const{ listingSchema } = require("./schema.js")
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-
+const Review = require("./models/review.js");
 // Connect Mongo
 main()
-  .then(() => console.log("✅ Connected to DB"))
-  .catch((err) => console.log("❌ DB Connection Error:", err));
+  .then(() => {
+    console.log("✅ Connected to DB")
+  })
+  .catch((err) => {
+     console.log("❌ DB Connection Error:", err)
+    });
 
 async function main() {
   await mongoose.connect(MONGO_URL);
@@ -86,7 +90,7 @@ app.get(
   "/listings/:id/edit",
   wrapAsync(async (req, res, next) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
 
     if (!listing) {
       return next(new ExpressError(404, "Listing not found"));
@@ -112,15 +116,52 @@ app.put(
   })
 );
 
-// Delete Route
+// Delete Listing Route
+// Delete Review Route
 app.delete(
-  "/listings/:id",
+  "/listings/:id/reviews/:reviewId",
   wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log("🗑️ Deleted:", deletedListing);
-    res.redirect("/listings");
+    let { id, reviewId } = req.params;
+
+    // 1. Delete review from Review collection
+    await Review.findByIdAndDelete(reviewId);
+
+    // 2. Remove reference from listing
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+
+    res.redirect(`/listings/${id}`);
   })
+);
+
+
+//Reviews
+//Post Review Route
+app.post("/listings/:id/reviews", async (req,res) => {
+  let listing = await Listing.findById(req.params.id);
+  let newReview = new Review (req.body.review);
+
+  listing.reviews.push(newReview);
+
+  await newReview.save();
+  await listing.save();
+
+  console.log("new review saved");
+  
+  res.redirect(`/listings/${listing._id}`);
+});
+
+//Delete Review Route
+app.delete("/listings/:id/reviews/:reviewId",
+  wrapAsync(async (req,res) => {
+
+  let {id, reviewId} = req.params;
+
+  await Listing.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
+  await Review.findByIdAnd(reviewId);
+
+
+  res.redirect(`/listings/${id}`);
+}) 
 );
 
 // 404 Handler
